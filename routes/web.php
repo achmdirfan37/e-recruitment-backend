@@ -21,3 +21,5 @@ Route::post('/ms_pelamar/store','MsPelamarController@store');
 Route::get('/ms_pelamar/edit/{id}','MsPelamarController@edit');
 Route::post('/ms_pelamar/update','MsPelamarController@update');
 Route::get('/ms_pelamar/hapus/{id}','MsPelamarController@hapus');
+
+Auth::routes();

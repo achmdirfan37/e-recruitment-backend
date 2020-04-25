@@ -27,11 +27,18 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_pelamar/rangeGaji', 'MsPelamarController@rangeGaji');
     Route::get('/ms_pelamar/view', 'MsPelamarController@index');
     Route::get('/ms_pelamar/viewDetail/{id}', 'MsPelamarController@showDetail');
+    Route::post('/ms_pelamar/regis', 'MsPelamarController@registerPelamar');
+    Route::post('/ms_pelamar/profile', 'MsPelamarController@getAuthenticatedUser');
+    Route::post('/ms_pelamar/login', 'MsPelamarController@login');
     Route::post('/ms_pelamar/create', 'MsPelamarController@create');
     Route::get('/ms_pelamar/{id}/edit', 'MsPelamarController@edit');
     Route::put('/ms_pelamar/{id}/update', 'MsPelamarController@update');
     //Route::put('/ms_pelamar/{id}/update', 'MsPelamarController@update');
     Route::delete('/ms_pelamar/delete/{id}', 'MsPelamarController@delete');
+
+    Route::middleware('auth:api')->get('/user', function(Request $request){
+        return $request->user();
+    });
 
     //Master Bidang Pekerjaan
     Route::get('/ms_bidang_pekerjaan/search', 'MsBidangPekerjaanController@search');
@@ -41,6 +48,7 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_bidang_pekerjaan/{id}/edit', 'MsBidangPekerjaanController@edit');
     Route::put('/ms_bidang_pekerjaan/{id}/update', 'MsBidangPekerjaanController@update');
     Route::delete('/ms_bidang_pekerjaan/delete/{id}', 'MsBidangPekerjaanController@delete');
+    Route::get('/ms_bidang_pekerjaan/ddl', 'MsBidangPekerjaanController@view');
 
     //Master Keterampilan
     Route::get('/ms_keterampilan/search', 'MsKeterampilanController@search');
@@ -59,6 +67,7 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_perusahaan/edit/{id}', 'MsPerusahaanController@edit');
     Route::put('/ms_perusahaan/update/{id}', 'MsPerusahaanController@update');
     Route::delete('/ms_perusahaan/delete/{id}', 'MsPerusahaanController@delete');
+    Route::get('/ms_perusahaan/ddl', 'MsPerusahaanController@view');
 
 
     //Master Role/HRD
@@ -69,15 +78,16 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_role/edit/{id}', 'MsRoleController@edit');
     Route::put('/ms_role/update/{id}', 'MsRoleController@update');
     Route::delete('/ms_role/delete/{id}', 'MsRoleController@delete');
+    Route::get('/ms_role/showPerusahaan', 'MsRoleController@showPerusahaan');
 
     //Master Lowongan Pekerjaan
-    Route::get('/ms_lowongan_pekerjaan/search', 'MsLowonganPekerjaanController@search');
-    Route::get('/ms_lowongan_pekerjaan/view', 'MsLowonganPekerjaanController@index');
-    Route::get('/ms_lowongan_pekerjaan/viewDetail/{id}', 'MsLowonganPekerjaanController@showDetail');
-    Route::post('/ms_lowongan_pekerjaan/create', 'MsLowonganPekerjaanController@create');
-    Route::get('/ms_lowongan_pekerjaan/edit/{id}', 'MsLowonganPekerjaanController@edit');
-    Route::put('/ms_lowongan_pekerjaan/update/{id}', 'MsLowonganPekerjaanController@update');
-    Route::delete('/ms_lowongan_pekerjaan/delete/{id}', 'MsLowonganPekerjaanController@delete');
+    Route::get('/ms_lowongan/search', 'MsLowonganController@search');
+    Route::get('/ms_lowongan/view', 'MsLowonganController@index');
+    Route::get('/ms_lowongan/viewDetail/{id}', 'MsLowonganController@showDetail');
+    Route::post('/ms_lowongan/create', 'MsLowonganController@create');
+    Route::get('/ms_lowongan/edit/{id}', 'MsLowonganController@edit');
+    Route::put('/ms_lowongan/update/{id}', 'MsLowonganController@update');
+    Route::delete('/ms_lowongan/delete/{id}', 'MsLowonganController@delete');
 
     //Master Riwayat Pendidikan
     Route::get('/ms_riwayat_pendidikan/search', 'MsRiwayatPendidikanController@search');

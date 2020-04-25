@@ -32,6 +32,16 @@ class MsBidangPekerjaanController extends Controller
 
         return $ms_bidang_pekerjaan;
 
+    }
+
+    public function view()
+	{
+		$ms_bidang_pekerjaan = DB::table('ms_bidang_pekerjaan')->get();
+
+        return response()->json([
+            'message' => 'success',
+            'data' => $ms_bidang_pekerjaan
+        ], 200);
 	}
 
 	public function showDetail($id)

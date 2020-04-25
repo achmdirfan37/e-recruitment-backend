@@ -8,8 +8,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\MsPelamar;
+use App\User;
+use App\Http\Mail\MailNotify;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Mail;
+// use Illuminate\Bus\Queueable;
+// use Illuminate\Mail\Mailable;
+// use Illuminate\Queue\SerializesModels;
+// use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Facades\JWFactory;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Tymon\JWTAuth\PayloadFactory;
+use Tymon\JWTAuth\JWTManager as JWT;
 
 class MsPelamarController extends Controller
 {
@@ -27,7 +43,7 @@ class MsPelamarController extends Controller
 
         return $ms_pelamar;
 
-	}
+    }
 
 	public function showDetail($id)
     {
@@ -88,6 +104,91 @@ class MsPelamarController extends Controller
 		$ms_pelamar->save();
 
         return response()->json($ms_pelamar);
+    }
+
+
+
+    public function registerPelamar(Request $request){
+
+        $ms_pelamar = new MsPelamar();
+        $email = $request->input('pel_email');
+        $nama = $request->input('pel_nama_lengkap');
+
+        $ms_pelamar->pel_email = $email;
+        $ms_pelamar->pel_password = $request->input('pel_password');
+		$ms_pelamar->pel_no_ktp = $request->input('pel_no_ktp');
+        $ms_pelamar->pel_nama_lengkap = $nama;
+        $ms_pelamar->pel_jenis_kelamin = $request->input('pel_jenis_kelamin');
+        $ms_pelamar->pel_tempat_lahir = $request->input('pel_tempat_lahir');
+        $ms_pelamar->pel_tanggal_lahir = $request->input('pel_tanggal_lahir');
+        $ms_pelamar->pel_no_telepon = $request->input('pel_no_telepon');
+        $ms_pelamar->pel_alamat = $request->input('pel_alamat');
+        $ms_pelamar->pel_tinggi_badan = $request->input('pel_tinggi_badan');
+        $ms_pelamar->pel_berat_badan = $request->input('pel_berat_badan');
+        $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
+        $ms_pelamar->pel_jabatan_dicari = $request->input('pel_jabatan_dicari');
+        $ms_pelamar->pel_status_aktif = "Aktif";
+        $ms_pelamar->pel_umur = $request->input('pel_umur');
+        $ms_pelamar->pel_pendidikan_terakhir = $request->input('pel_pendidikan_terakhir');
+        $ms_pelamar->created_by = $request->input('created_by');
+
+        $to_name = $nama;
+        $to_email = $email;
+        $data = array("name" => $to_name, "body" => "Coba dulu Deh");
+        Mail::send('mail', $data, function ($message) use ($to_name, $to_email){
+            $message->to($to_email)
+                ->subject('Like this Example');
+        });
+
+        $user = User::create([
+            'name' => $request->input('pel_nama_lengkap'),
+            'email' => $request->input('pel_email'),
+            'password' => Hash::make($request->input('pel_password')),
+        ]);
+
+        $token = JWTAuth::fromUser($user);
+
+    //     Mail::to($to_email)->send(new MailNotify($to_name));
+    //     if (Mail::failures()) {
+    //         return response()->Fail('Sorry! Please try again latter');
+    //    }else{
+    //         return response()->success('Great! Successfully send in your mail');
+    //       }
+
+		$ms_pelamar->save();
+
+        return response()->json(compact('user', 'token'), 201);
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->json()->all();
+
+        try {
+            if (! $token = JWTAuth::attempt($credentials)) {
+                return response()->json(['error' => 'invalid_credentials'], 400);
+            }
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'could_not_create_token'], 500);
+        }
+
+        return response()->json(compact('token'));
+    }
+
+    public function getAuthenticatedUser(){
+        try{
+            if($user == JWTAuth::parseToken()->authenticate()){
+                return response()->json(['user_not_found'], 404);
+            }
+        }catch(Tymon\JWTAuth\Exceptions\TokenExpiredException $e){
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch(Tymon\JWTAuth\Exceptions\TokenInvalidException $e){
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(Tymon\JWTAuth\Exceptions\JWTException $e){
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+
+        return response()->json(compact('user'));
     }
 
 	// method untuk edit data pelamar

@@ -26,6 +26,16 @@ class MsPerusahaanController extends Controller
 
         return $ms_perusahaan;
 
+    }
+
+    public function view()
+	{
+		$ms_perusahaan = DB::table('ms_perusahaan')->get();
+
+        return response()->json([
+            'message' => 'success',
+            'data' => $ms_perusahaan
+        ], 200);
 	}
 
 	public function showDetail($id)
