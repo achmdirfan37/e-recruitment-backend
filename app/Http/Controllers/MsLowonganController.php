@@ -15,12 +15,9 @@ class MsLowonganController extends Controller
 {
     public function index()
 	{
-		$ms_lowongan = DB::table('ms_lowongan')->get();
+        $ms_lowongan = DB::table('ms_lowongan')->paginate(5);;
 
-        return response()->json([
-            'message' => 'success',
-            'data' => $ms_lowongan
-        ], 200);
+        return $ms_lowongan;
 	}
 
 	public function showDetail($id)

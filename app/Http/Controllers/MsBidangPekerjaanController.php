@@ -21,7 +21,7 @@ class MsBidangPekerjaanController extends Controller
         //     'message' => 'success',
         //     'data' => $ms_bidang_pekerjaan
 		// ], 200);
-		$ms_bidang_pekerjaan = DB::table('ms_bidang_pekerjaan')->paginate(2);;
+		$ms_bidang_pekerjaan = DB::table('ms_bidang_pekerjaan')->paginate(5);;
 
         // return response()->json([
         //     'message' => 'success',

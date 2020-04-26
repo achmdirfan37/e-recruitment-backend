@@ -17,13 +17,9 @@ class MsRoleController extends Controller
 {
     public function index()
 	{
-		$ms_role = DB::table('ms_role')->get();
+        $ms_role = DB::table('ms_role')->paginate(5);;
 
-        return response()->json([
-            'message' => 'success',
-            'data' => $ms_role
-        ], 200);
-
+        return $ms_role;
 	}
 
 	public function showDetail($id)
@@ -49,7 +45,7 @@ class MsRoleController extends Controller
 		$ms_role = DB::table('ms_role')
 		->where('rol_username','LIKE',"%".$cari."%")
 		->orwhere('rol_nama_lengkap', 'LIKE', "%".$cari."%")
-		->orwhere('rol_perusahaan', 'LIKE', "%".$cari."%")->get();
+		->orwhere('rol_perusahaan', 'LIKE', "%".$cari."%")->paginate(5);
 
         return response()->json($ms_role);
     }

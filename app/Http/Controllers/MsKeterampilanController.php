@@ -15,7 +15,7 @@ class MsKeterampilanController extends Controller
 {
     public function index()
 	{
-		$ms_keterampilan = DB::table('ms_keterampilan')->paginate(2);;
+		$ms_keterampilan = DB::table('ms_keterampilan')->paginate(5);;
 
         // return response()->json([
         //     'message' => 'success',

@@ -15,13 +15,9 @@ class MsPengalamanKerjaController extends Controller
 {
     public function index()
 	{
-		$ms_pengalaman_kerja = DB::table('ms_pengalaman_kerja')->get();
+        $ms_pengalaman_kerja = DB::table('ms_pengalaman_kerja')->paginate(5);;
 
-        // $ms_pengalaman_kerja = MsPengalamanKerja::paginate(5);
-        return response()->json([
-            'message' => 'success',
-            'data' => $ms_pengalaman_kerja
-        ], 200);
+        return $ms_pengalaman_kerja;
 	}
 
 	public function showDetail($id)
