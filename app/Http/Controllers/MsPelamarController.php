@@ -134,10 +134,10 @@ class MsPelamarController extends Controller
 
         $to_name = $nama;
         $to_email = $email;
-        $data = array("name" => $to_name, "body" => "Coba dulu Deh");
+        $data = array("name" => $to_name, "body" => "Thanks for signing up! Please check your email to complete your registration.");
         Mail::send('mail', $data, function ($message) use ($to_name, $to_email){
             $message->to($to_email)
-                ->subject('Like this Example');
+                ->subject('Please verify your email address.');
         });
 
         $user = User::create([

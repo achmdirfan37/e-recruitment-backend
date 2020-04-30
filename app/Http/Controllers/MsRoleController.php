@@ -18,7 +18,9 @@ class MsRoleController extends Controller
     public function index()
 	{
         $ms_role = DB::table('ms_role')->paginate(5);;
-
+        $results = DB::select( DB::raw("SELECT rol_username, rol_password, rol_nama_lengkap, rol_perusahaan,
+        rol_email, rol_no_telepon, rol_status_aktif FROM ms_role "
+          ));
         return $ms_role;
 	}
 
