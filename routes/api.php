@@ -78,6 +78,7 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_role/edit/{id}', 'MsRoleController@edit');
     Route::put('/ms_role/update/{id}', 'MsRoleController@update');
     Route::delete('/ms_role/delete/{id}', 'MsRoleController@delete');
+    Route::delete('/ms_role/status/{id}', 'MsRoleController@ubahStatus');
     Route::get('/ms_role/showPerusahaan', 'MsRoleController@showPerusahaan');
 
     //Master Lowongan Pekerjaan

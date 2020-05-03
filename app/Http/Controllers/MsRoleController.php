@@ -107,6 +107,13 @@ class MsRoleController extends Controller
         $ms_role = MsRole::find($id);
         $ms_role->delete();
         return response()->json($ms_role);
+    }
+    
+    public function ubahStatus($id){
+        $ms_role = MsRole::find($id);
+        $ms_role->rol_status_aktif = "Tidak Aktif";
+		$ms_role->update();
+        return response()->json($ms_role);
 	}
 
 }
