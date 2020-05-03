@@ -27,6 +27,31 @@ class MsLowonganController extends Controller
         return response()->json($ms_lowongan);
     }
 
+    // method untuk edit data pelamar
+	// public function showLowonganbyPerusahaan($id)
+	// {
+    //     MsLowongan::where( 'low_perusahaan', '=', $id )
+    //         ->where( 'low_status_aktif', '=', 'Aktif' )
+    //         ->get();
+    // }
+
+    public function showLowonganbyPerusahaan($id)
+    {
+        $ms_pelamar = MsLowongan::where( 'low_perusahaan', '=', 1 )
+            ->where( 'low_status_aktif', '=', 'Aktif' )
+            ->paginate(5);
+
+        return response()->json($ms_pelamar);
+
+        // $ms_lowongan = DB::table('ms_lowongan')
+        // ->where('low_perusahaan', $id)
+        // ->where( 'low_status_aktif', 'Aktif' )
+        // ->paginate(5)
+        // ->groupBy('id');
+
+        // return response()->json($ms_lowongan);
+    }
+
 	public function search(Request $request)
     {
 		// menangkap data pencarian

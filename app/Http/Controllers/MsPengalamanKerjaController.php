@@ -39,7 +39,7 @@ class MsPengalamanKerjaController extends Controller
 		->orwhere('pkj_industri', 'LIKE', "%".$cari."%")
 		->orwhere('pkj_gambaran_pekerjaan', 'LIKE', "%".$cari."%")
         ->orwhere('pkj_spesialisasi', 'LIKE', "%".$cari."%")
-        ->orwhere('pkj_bidang_kerja', 'LIKE', "%".$cari."%")->paginate(5);
+        ->orwhere('pkj_jabatan', 'LIKE', "%".$cari."%")->paginate(5);
 
         return response()->json($ms_pengalaman_kerja);
     }
@@ -57,6 +57,7 @@ class MsPengalamanKerjaController extends Controller
         $ms_pengalaman_kerja->pkj_gambaran_pekerjaan = $request->input('pkj_gambaran_pekerjaan');
         $ms_pengalaman_kerja->pkj_spesialisasi = $request->input('pkj_spesialisasi');
         $ms_pengalaman_kerja->pkj_bidang_kerja = $request->input('pkj_bidang_kerja');
+        $ms_pengalaman_kerja->pkj_jabatan = $request->input('pkj_jabatan');
 
 		$ms_pengalaman_kerja->save();
 
@@ -84,6 +85,7 @@ class MsPengalamanKerjaController extends Controller
         $ms_pengalaman_kerja->pkj_gambaran_pekerjaan = $request->input('pkj_gambaran_pekerjaan');
         $ms_pengalaman_kerja->pkj_spesialisasi = $request->input('pkj_spesialisasi');
         $ms_pengalaman_kerja->pkj_bidang_kerja = $request->input('pkj_bidang_kerja');
+        $ms_pengalaman_kerja->pkj_jabatan = $request->input('pkj_jabatan');
 
 		$ms_pengalaman_kerja->update();
 

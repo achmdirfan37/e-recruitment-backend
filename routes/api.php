@@ -81,6 +81,8 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_role/showPerusahaan', 'MsRoleController@showPerusahaan');
 
     //Master Lowongan Pekerjaan
+    Route::get('/ms_lowongan/lowonganbyperusahaan/{id}', 'MsLowonganController@showLowonganbyPerusahaan');
+    Route::get('/ms_lowongan/applylamaran', 'MsLowonganController@applyLamaran');
     Route::get('/ms_lowongan/search', 'MsLowonganController@search');
     Route::get('/ms_lowongan/view', 'MsLowonganController@index');
     Route::get('/ms_lowongan/viewDetail/{id}', 'MsLowonganController@showDetail');

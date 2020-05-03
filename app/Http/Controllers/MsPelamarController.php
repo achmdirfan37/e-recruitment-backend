@@ -13,6 +13,8 @@ use App\Http\Mail\MailNotify;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Mail;
+use Carbon\Carbon;
+
 // use Illuminate\Bus\Queueable;
 // use Illuminate\Mail\Mailable;
 // use Illuminate\Queue\SerializesModels;
@@ -72,6 +74,10 @@ class MsPelamarController extends Controller
 
         $ms_pelamar = new MsPelamar();
 
+        $dateOfBirth = $request->input('pel_tanggal_lahir');	// get the request date
+
+        $age = Carbon::parse($dateOfBirth)->age;	// calculate the age
+
         $ms_pelamar->pel_email = $request->input('pel_email');
         $ms_pelamar->pel_password = $request->input('pel_password');
 		$ms_pelamar->pel_no_ktp = $request->input('pel_no_ktp');
@@ -86,7 +92,7 @@ class MsPelamarController extends Controller
         $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
         $ms_pelamar->pel_jabatan_dicari = $request->input('pel_jabatan_dicari');
         $ms_pelamar->pel_status_aktif = "Aktif";
-        $ms_pelamar->pel_umur = $request->input('pel_umur');
+        $ms_pelamar->pel_umur = $age;
         $ms_pelamar->pel_pendidikan_terakhir = $request->input('pel_pendidikan_terakhir');
 		$ms_pelamar->created_by = $request->input('created_by');
 
@@ -111,6 +117,9 @@ class MsPelamarController extends Controller
     public function registerPelamar(Request $request){
 
         $ms_pelamar = new MsPelamar();
+        $dateOfBirth = $request->input('pel_tanggal_lahir');	// get the request date
+
+        $age = Carbon::parse($dateOfBirth)->age;	// calculate the age
         $email = $request->input('pel_email');
         $nama = $request->input('pel_nama_lengkap');
 
@@ -128,7 +137,7 @@ class MsPelamarController extends Controller
         $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
         $ms_pelamar->pel_jabatan_dicari = $request->input('pel_jabatan_dicari');
         $ms_pelamar->pel_status_aktif = "Aktif";
-        $ms_pelamar->pel_umur = $request->input('pel_umur');
+        $ms_pelamar->pel_umur = $age;
         $ms_pelamar->pel_pendidikan_terakhir = $request->input('pel_pendidikan_terakhir');
         $ms_pelamar->created_by = $request->input('created_by');
 
