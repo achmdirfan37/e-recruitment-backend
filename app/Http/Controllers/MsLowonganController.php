@@ -23,7 +23,7 @@ class MsLowonganController extends Controller
 	public function showDetail($id)
     {
         // get detail pengalaman kerja
-		$ms_lowongan = MsLowongan::find($id);
+		$ms_lowongan = MsLowongan::find(7);
         return response()->json($ms_lowongan);
     }
 
@@ -122,6 +122,6 @@ class MsLowonganController extends Controller
         $ms_lowongan = MsLowongan::find($id);
         $ms_lowongan->delete();
         return response()->json($ms_lowongan);
-	}
+    }
 
 }
