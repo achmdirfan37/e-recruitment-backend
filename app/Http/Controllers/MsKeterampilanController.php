@@ -10,22 +10,14 @@ use DB;
 use App\MsKeterampilan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Mail;
 
 class MsKeterampilanController extends Controller
 {
     public function index()
 	{
-		$ms_keterampilan = DB::table('ms_keterampilan')->paginate(5);;
-
-        // return response()->json([
-        //     'message' => 'success',
-        //     'data' => $ms_keterampilan
-        // ], 200);
-
-        // $ms_keterampilan = MsKeterampilan::paginate(5);
-
+        $ms_keterampilan = DB::table('ms_keterampilan')->paginate(5);;
         return $ms_keterampilan;
-
 	}
 
 	public function showDetail($id)
@@ -50,7 +42,7 @@ class MsKeterampilanController extends Controller
         $ms_keterampilan = new MsKeterampilan();
 
         $ms_keterampilan->ket_nama = $request->input('ket_nama');
-		$ms_keterampilan->ket_pelamar = 0320170004;
+		$ms_keterampilan->ket_pelamar = 4;
 		//$request->input('ket_pelamar');
 
 		$ms_keterampilan->save();
@@ -68,11 +60,10 @@ class MsKeterampilanController extends Controller
 	// update data pelamar
 	public function update(Request $request, $id)
 	{
+		//http://127.0.0.1:8000/api/ms_pelamar/create?pel_nama_lengkap=Dihan Kaniro&pel_email=dihankaniro@gmail.com&pel_password=9876&pel_jenis_kelamin=Perempuan&pel_no_telepon=081347576890&cari=S2&created_by=1&pel_no_ktp=0320170021&pel_tanggal_lahir=10-15-1999&pel_tempat_lahir=Jakarta&pel_gaji_diharapkan=7500000&pel_umur=20&pel_alamat=Jakarta Barat&pel_tinggi_badan=162&pel_berat_badan=60&pel_pendidikan_terakhir=S2
 		$ms_keterampilan = MsKeterampilan::find($id);
 
         $ms_keterampilan->ket_nama = $request->input('ket_nama');
-		$ms_keterampilan->ket_pelamar = 0320170004;
-		//$request->input('ket_pelamar');
 
 		$ms_keterampilan->update();
 
@@ -84,6 +75,6 @@ class MsKeterampilanController extends Controller
         $ms_keterampilan = MsKeterampilan::find($id);
         $ms_keterampilan->delete();
         return response()->json($ms_keterampilan);
-	}
+    }
 
 }

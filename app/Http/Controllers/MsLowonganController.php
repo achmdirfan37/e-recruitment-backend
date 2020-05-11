@@ -23,7 +23,7 @@ class MsLowonganController extends Controller
 	public function showDetail($id)
     {
         // get detail pengalaman kerja
-		$ms_lowongan = MsLowongan::find(7);
+		$ms_lowongan = MsLowongan::find($id);
         return response()->json($ms_lowongan);
     }
 
@@ -37,11 +37,11 @@ class MsLowonganController extends Controller
 
     public function showLowonganbyPerusahaan($id)
     {
-        $ms_pelamar = MsLowongan::where( 'low_perusahaan', '=', 1 )
+        $ms_lowongan = MsLowongan::where( 'low_perusahaan', '=', $id )
             ->where( 'low_status_aktif', '=', 'Aktif' )
             ->paginate(5);
 
-        return response()->json($ms_pelamar);
+        return response()->json($ms_lowongan);
 
         // $ms_lowongan = DB::table('ms_lowongan')
         // ->where('low_perusahaan', $id)
@@ -56,7 +56,7 @@ class MsLowonganController extends Controller
     {
 		// menangkap data pencarian
 		$cari = $request->cari;
-		$ms_lowongan = DB::table('ms_lowongan')
+        $ms_lowongan = DB::table('ms_lowongan')
 		->where('low_judul','LIKE',"%".$cari."%")
 		->orwhere('low_bidang_kerja', 'LIKE', "%".$cari."%") //ubah jadi tahun lulus
 		->orwhere('low_gaji', 'LIKE', "%".$cari."%")
@@ -66,6 +66,22 @@ class MsLowonganController extends Controller
 
         return response()->json($ms_lowongan);
     }
+
+    // public function searchbyidperusahaan($id, Request $request)
+    // {
+	// 	// menangkap data pencarian
+	// 	$cari = $request->cari;
+	// 	$ms_lowongan = DB::table('ms_lowongan')
+    //     ->where('low_perusahaan', '=', $id )
+	// 	->orwhere('low_judul','LIKE',"%".$cari."%")
+	// 	->orwhere('low_bidang_kerja', 'LIKE', "%".$cari."%") //ubah jadi tahun lulus
+	// 	->orwhere('low_gaji', 'LIKE', "%".$cari."%")
+	// 	->orwhere('low_tanggal_ditutup', 'LIKE', "%".$cari."%")
+	// 	->orwhere('low_kualifikasi', 'LIKE', "%".$cari."%")
+	// 	->orwhere('low_jabatan', 'LIKE', "%".$cari."%")->paginate(5);
+
+    //     return response()->json($ms_lowongan);
+    // }
 
 	public function create(Request $request){
 

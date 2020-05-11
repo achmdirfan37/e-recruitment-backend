@@ -50,7 +50,7 @@ class MsPelamarController extends Controller
 	public function showDetail($id)
     {
         // get detail pelamar
-		$ms_pelamar = MsPelamar::find($id);
+		$ms_pelamar = MsPelamar::find(17);
         return response()->json($ms_pelamar);
     }
 
@@ -207,6 +207,31 @@ class MsPelamarController extends Controller
         return response()->json($ms_pelamar);
 	}
 
+    // update data pelamar
+	public function changePassword(Request $request, $id)
+	{
+        $ms_pelamar = MsPelamar::find($id);
+        
+        $password = $request->input('pel_password');
+        $old_pass = $request->input('pel_old_pass');
+        $new_pass = $request->input('pel_new_pass');
+        $con_pass = $request->input('pel_con_pass');
+
+        if ($old_pass != $password) {
+            return response()->json('Your Password is Wrong!! Try Again');
+        } else if ($new_pass != $con_pass) {
+            return response()->json('Your Password is Wrong!! Try Again');
+        } else if (($old_pass == $password) && ($new_pass == $con_pass)){
+            $ms_pelamar->pel_password = $con_pass;    
+        } else {
+            return response()->json('Your Password is Wrong!! Try Again');
+        }
+
+		$ms_pelamar->update();
+
+        return response()->json($ms_pelamar);
+	}
+
 	// update data pelamar
 	public function update(Request $request, $id)
 	{
@@ -270,7 +295,11 @@ class MsPelamarController extends Controller
 
         // return response()->json($ms_pelamar);
 
-		$ms_pelamar = MsPelamar::find($id);
+        $ms_pelamar = MsPelamar::find($id);
+        $dateOfBirth = $request->input('pel_tanggal_lahir');	// get the request date
+
+        $age = Carbon::parse($dateOfBirth)->age;	// calculate the age
+
 
         $ms_pelamar->pel_email = $request->input('pel_email');
 		$ms_pelamar->pel_no_ktp = $request->input('pel_no_ktp');
@@ -285,7 +314,7 @@ class MsPelamarController extends Controller
         $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
         $ms_pelamar->pel_jabatan_dicari = $request->input('pel_jabatan_dicari');
         $ms_pelamar->pel_status_aktif = $request->input('pel_status_aktif');
-        $ms_pelamar->pel_umur = $request->input('pel_umur');
+        $ms_pelamar->pel_umur = $age;
         $ms_pelamar->pel_pendidikan_terakhir = $request->input('pel_pendidikan_terakhir');
 		$ms_pelamar->updated_by = $request->input('updated_by');
 

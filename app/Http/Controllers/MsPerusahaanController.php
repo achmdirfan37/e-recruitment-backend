@@ -65,7 +65,7 @@ class MsPerusahaanController extends Controller
         $ms_perusahaan->per_nama = $request->input('per_nama');
         $ms_perusahaan->per_deskripsi = $request->input('per_deskripsi');
 		$ms_perusahaan->per_email = $request->input('per_email');
-        $ms_perusahaan->per_no_telepon = $request->input('per_no_telepon)');
+        $ms_perusahaan->per_no_telepon = $request->input('per_no_telepon');
         $ms_perusahaan->per_alamat_website = $request->input('per_alamat_website');
         $ms_perusahaan->per_alamat = $request->input('per_alamat');
         $ms_perusahaan->per_status_aktif = "Aktif";

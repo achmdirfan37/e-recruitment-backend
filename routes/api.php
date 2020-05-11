@@ -21,6 +21,19 @@ use Illuminate\Http\Request;
 // });
 
 Route::group(['middleware' => 'api'], function() {
+
+    //Transaksi
+    Route::post('/tr_lamaran_kerja/fileupload', 'TrLamaranKerjaController@create');
+    Route::get('/tr_lamaran_kerja/viewDetail/{id}', 'TrLamaranKerjaController@showDetail');
+    Route::get('/tr_lamaran_kerja/viewDetailInterview1', 'TrLamaranKerjaController@showDetailInterview1');
+    Route::get('/tr_lamaran_kerja/viewDetailInterview2', 'TrLamaranKerjaController@showDetailInterview2');
+    Route::get('/tr_lamaran_kerja/viewDetailInterviewHR', 'TrLamaranKerjaController@showDetailInterviewHR');
+    Route::get('/tr_lamaran_kerja/viewDetailPsikotes', 'TrLamaranKerjaController@showDetailPsikotes');
+    Route::get('/tr_lamaran_kerja/viewDetailMCU', 'TrLamaranKerjaController@showDetailMCU');
+    Route::get('/tr_lamaran_kerja/viewDetailInterviewPelamar/{id}', 'TrLamaranKerjaController@showDetailInterviewPelamar');
+    Route::get('/tr_lamaran_kerja/viewDetailPsikotesPelamar/{id}', 'TrLamaranKerjaController@showDetailPsikotesPelamar');
+    Route::get('/tr_lamaran_kerja/viewDetailMCUPelamar/{id}', 'TrLamaranKerjaController@showDetailMCUPelamar');
+    
     //Master Pelamar
     Route::get('/ms_pelamar/search', 'MsPelamarController@search');
     Route::get('/ms_pelamar/rangeUmur', 'MsPelamarController@rangeUmur');
@@ -35,6 +48,7 @@ Route::group(['middleware' => 'api'], function() {
     Route::put('/ms_pelamar/{id}/update', 'MsPelamarController@update');
     //Route::put('/ms_pelamar/{id}/update', 'MsPelamarController@update');
     Route::delete('/ms_pelamar/delete/{id}', 'MsPelamarController@delete');
+    Route::put('/ms_pelamar/{id}/changePassword', 'MsPelamarController@changePassword');
 
     Route::middleware('auth:api')->get('/user', function(Request $request){
         return $request->user();
@@ -55,8 +69,8 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_keterampilan/view', 'MsKeterampilanController@index');
     Route::get('/ms_keterampilan/viewDetail/{id}', 'MsKeterampilanController@showDetail');
     Route::post('/ms_keterampilan/create', 'MsKeterampilanController@create');
-    Route::get('/ms_keterampilan/{id}/edit', 'MsKeterampilanController@edit');
-    Route::put('/ms_keterampilan/{id}/update', 'MsKeterampilanController@update');
+    Route::get('/ms_keterampilan/edit/{id}', 'MsKeterampilanController@edit');
+    Route::put('/ms_keterampilan/update/{id}', 'MsKeterampilanController@update');
     Route::delete('/ms_keterampilan/delete/{id}', 'MsKeterampilanController@delete');
 
     //Master Perusahaan
@@ -85,6 +99,7 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_lowongan/lowonganbyperusahaan/{id}', 'MsLowonganController@showLowonganbyPerusahaan');
     Route::get('/ms_lowongan/applylamaran', 'MsLowonganController@applyLamaran');
     Route::get('/ms_lowongan/search', 'MsLowonganController@search');
+    //Route::get('/ms_lowongan/searchbyidperusahaan/{id}', 'MsLowonganController@searchbyidperusahaan');
     Route::get('/ms_lowongan/view', 'MsLowonganController@index');
     Route::get('/ms_lowongan/viewDetail/{id}', 'MsLowonganController@showDetail');
     Route::post('/ms_lowongan/create', 'MsLowonganController@create');
@@ -97,8 +112,8 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_riwayat_pendidikan/view', 'MsRiwayatPendidikanController@index');
     Route::get('/ms_riwayat_pendidikan/viewDetail/{id}', 'MsRiwayatPendidikanController@showDetail');
     Route::post('/ms_riwayat_pendidikan/create', 'MsRiwayatPendidikanController@create');
-    Route::get('/ms_riwayat_pendidikan/edit/{id}', 'MsRiwayatPendidikanController@edit');
-    Route::put('/ms_riwayat_pendidikan/update/{id}', 'MsRiwayatPendidikanController@update');
+    Route::get('/ms_riwayat_pendidikan/{id}/edit', 'MsRiwayatPendidikanController@edit');
+    Route::put('/ms_riwayat_pendidikan/{id}/update', 'MsRiwayatPendidikanController@update');
     Route::delete('/ms_riwayat_pendidikan/delete/{id}', 'MsRiwayatPendidikanController@delete');
 
     //Master Pengalaman Kerja
@@ -106,8 +121,8 @@ Route::group(['middleware' => 'api'], function() {
     Route::get('/ms_pengalaman_kerja/view', 'MsPengalamanKerjaController@index');
     Route::get('/ms_pengalaman_kerja/viewDetail/{id}', 'MsPengalamanKerjaController@showDetail');
     Route::post('/ms_pengalaman_kerja/create', 'MsPengalamanKerjaController@create');
-    Route::get('/ms_pengalaman_kerja/edit/{id}', 'MsPengalamanKerjaController@edit');
-    Route::put('/ms_pengalaman_kerja/update/{id}', 'MsPengalamanKerjaController@update');
+    Route::get('/ms_pengalaman_kerja/{id}/edit', 'MsPengalamanKerjaController@edit');
+    Route::put('/ms_pengalaman_kerja/{id}/update', 'MsPengalamanKerjaController@update');
     Route::delete('/ms_pengalaman_kerja/delete/{id}', 'MsPengalamanKerjaController@delete');
 
 });

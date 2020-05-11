@@ -1,0 +1,71 @@
+return (
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-md-8">
+                        <div className="card">
+                            <div className="card-header">Tambah Pelamar</div>
+
+                            <div className="card-body">
+                                <form onSubmit={this.handleFormSubmit}>
+                                    <div className="form-group">
+                                        <input type="text"
+                                        required
+                                        name="pel_nama_lengkap"
+                                        onChange={this.handleNamaLengkapInputChange}
+                                        value={this.state.pel_nama_lengkap}
+                                        className="form-control" 
+                                        placeholder="Enter Nama Lengkap"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <input type="text" 
+                                        required
+                                        name="pel_email"
+                                        onChange={this.handleEmailInputChange}
+                                        value={this.state.pel_email}
+                                        className="form-control" 
+                                        placeholder="Enter Email"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <input type="text"
+                                        required
+                                        name="pel_umur"
+                                        onChange={this.handleUmurInputChange}
+                                        value={this.state.pel_umur}
+                                        className="form-control"
+                                        placeholder="Enter Umur"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <input type="text" 
+                                        required
+                                        name="pel_no_telepon"
+                                        onChange={this.handleNoTeleponInputChange}
+                                        value={this.state.pel_no_telepon}
+                                        className="form-control"
+                                        placeholder="Enter No Telepon"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <input type="text"
+                                        required
+                                        name="pel_jenis_kelamin"
+                                        onChange={this.handleJenisKelaminInputChange}
+                                        value={this.state.pel_jenis_kelamin}
+                                        className="form-control"
+                                        placeholder="Enter Jenis Kelamin"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <input type="textarea"
+                                        required
+                                        name="pel_alamat"
+                                        onChange={this.handleAlamatInputChange}
+                                        value={this.state.pel_alamat}
+                                        className="form-control"
+                                        placeholder="Enter Alamat"/>
+                                    </div>
+                                    <button type="submit" className="btn btn-primary">Simpan Data Pelamar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );

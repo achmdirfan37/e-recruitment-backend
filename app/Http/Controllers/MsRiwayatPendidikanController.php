@@ -10,17 +10,14 @@ use DB;
 use App\MsRiwayatPendidikan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Mail;
 
 class MsRiwayatPendidikanController extends Controller
 {
     public function index()
 	{
-		$ms_riwayat_pendidikan = DB::table('ms_riwayat_pendidikan')->get();
-
-        return response()->json([
-            'message' => 'success',
-            'data' => $ms_riwayat_pendidikan
-        ], 200);
+        $ms_riwayat_pendidikan = DB::table('ms_riwayat_pendidikan')->paginate(5);;
+        return $ms_riwayat_pendidikan;
 	}
 
 	public function showDetail($id)
@@ -36,7 +33,7 @@ class MsRiwayatPendidikanController extends Controller
 		$cari = $request->cari;
 		$ms_riwayat_pendidikan = DB::table('ms_riwayat_pendidikan')
 		->where('rpd_nama_lembaga_pendidikan','LIKE',"%".$cari."%")
-		->orwhere('rpd_tanggal_lulus', 'LIKE', "%".$cari."%") //ubah jadi tahun lulus
+		->orwhere('rpd_tahun_lulus', 'LIKE', "%".$cari."%") //ubah jadi tahun lulus
 		->orwhere('rpd_kualifikasi', 'LIKE', "%".$cari."%")
 		->orwhere('rpd_lokasi', 'LIKE', "%".$cari."%")
 		->orwhere('rpd_jurusan', 'LIKE', "%".$cari."%")
@@ -45,12 +42,12 @@ class MsRiwayatPendidikanController extends Controller
         return response()->json($ms_riwayat_pendidikan);
     }
 
-	public function create(Request $request){
-
+	public function create(Request $request)
+	{
         $ms_riwayat_pendidikan = new MsRiwayatPendidikan();
 
         $ms_riwayat_pendidikan->rpd_nama_lembaga_pendidikan = $request->input('rpd_nama_lembaga_pendidikan');
-        $ms_riwayat_pendidikan->rpd_tanggal_lulus = date('Y-m-d',strtotime($request->input('rpd_tanggal_lulus')));
+        $ms_riwayat_pendidikan->rpd_tahun_lulus = $request->input('rpd_tahun_lulus');
         $ms_riwayat_pendidikan->rpd_kualifikasi = $request->input('rpd_kualifikasi');
         $ms_riwayat_pendidikan->rpd_lokasi = $request->input('rpd_lokasi');
         $ms_riwayat_pendidikan->rpd_jurusan = $request->input('rpd_jurusan');
@@ -71,16 +68,15 @@ class MsRiwayatPendidikanController extends Controller
 	// update data pelamar
 	public function update(Request $request, $id)
 	{
-
 		$ms_riwayat_pendidikan = MsRiwayatPendidikan::find($id);
 
         $ms_riwayat_pendidikan->rpd_nama_lembaga_pendidikan = $request->input('rpd_nama_lembaga_pendidikan');
-        $ms_riwayat_pendidikan->rpd_tanggal_lulus = date('Y-m-d',strtotime($request->input('rpd_tanggal_lulus')));
+        $ms_riwayat_pendidikan->rpd_tahun_lulus = $request->input('rpd_tahun_lulus');
+        //date('Y-m-d',strtotime($request->input('rpd_tanggal_lulus')));
         $ms_riwayat_pendidikan->rpd_kualifikasi = $request->input('rpd_kualifikasi');
         $ms_riwayat_pendidikan->rpd_lokasi = $request->input('rpd_lokasi');
         $ms_riwayat_pendidikan->rpd_jurusan = $request->input('rpd_jurusan');
         $ms_riwayat_pendidikan->rpd_keterangan_prestasi = $request->input('rpd_keterangan_prestasi');
-
 
 		$ms_riwayat_pendidikan->update();
 
@@ -92,6 +88,6 @@ class MsRiwayatPendidikanController extends Controller
         $ms_riwayat_pendidikan = MsRiwayatPendidikan::find($id);
         $ms_riwayat_pendidikan->delete();
         return response()->json($ms_riwayat_pendidikan);
-	}
+    }
 
 }
