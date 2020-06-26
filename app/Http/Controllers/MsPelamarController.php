@@ -8,12 +8,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\MsPelamar;
+use App\TrLamaranKerja;
 use App\User;
 use App\Http\Mail\MailNotify;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Mail;
 use Carbon\Carbon;
+use Log;
+use Response;
 
 // use Illuminate\Bus\Queueable;
 // use Illuminate\Mail\Mailable;
@@ -50,7 +53,7 @@ class MsPelamarController extends Controller
 	public function showDetail($id)
     {
         // get detail pelamar
-		$ms_pelamar = MsPelamar::find(17);
+		$ms_pelamar = MsPelamar::find($id);
         return response()->json($ms_pelamar);
     }
 
@@ -77,11 +80,13 @@ class MsPelamarController extends Controller
         $dateOfBirth = $request->input('pel_tanggal_lahir');	// get the request date
 
         $age = Carbon::parse($dateOfBirth)->age;	// calculate the age
+        $email = $request->input('pel_email');
+        $nama = $request->input('pel_nama_lengkap');
 
-        $ms_pelamar->pel_email = $request->input('pel_email');
+        $ms_pelamar->pel_email = $email;
         $ms_pelamar->pel_password = $request->input('pel_password');
 		$ms_pelamar->pel_no_ktp = $request->input('pel_no_ktp');
-        $ms_pelamar->pel_nama_lengkap = $request->input('pel_nama_lengkap');
+        $ms_pelamar->pel_nama_lengkap = $nama;
         $ms_pelamar->pel_jenis_kelamin = $request->input('pel_jenis_kelamin');
         $ms_pelamar->pel_tempat_lahir = $request->input('pel_tempat_lahir');
         $ms_pelamar->pel_tanggal_lahir = $request->input('pel_tanggal_lahir');
@@ -90,12 +95,20 @@ class MsPelamarController extends Controller
         $ms_pelamar->pel_tinggi_badan = $request->input('pel_tinggi_badan');
         $ms_pelamar->pel_berat_badan = $request->input('pel_berat_badan');
         $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
-        $ms_pelamar->pel_jabatan_dicari = $request->input('pel_jabatan_dicari');
+        $ms_pelamar->pel_posisi = $request->input('pel_posisi');
         $ms_pelamar->pel_status_aktif = "Aktif";
         $ms_pelamar->pel_umur = $age;
         $ms_pelamar->pel_pendidikan_terakhir = $request->input('pel_pendidikan_terakhir');
 		$ms_pelamar->created_by = $request->input('created_by');
 
+        
+        $to_name = $nama;
+        $to_email = $email;
+        $data = array("name" => $to_name, "body" => "Thanks for signing up! Please check your email to complete your registration.");
+        Mail::send('mailInterview', $data, function ($message) use ($to_name, $to_email){
+            $message->to($to_email)
+                ->subject('Please verify your email address.');
+        });
 		// if($request->hasfile('pel_foto')){
         //     $file = $request->file('pel_foto');
         //     $extension = $file->getClientOriginalExtension();
@@ -135,7 +148,7 @@ class MsPelamarController extends Controller
         $ms_pelamar->pel_tinggi_badan = $request->input('pel_tinggi_badan');
         $ms_pelamar->pel_berat_badan = $request->input('pel_berat_badan');
         $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
-        $ms_pelamar->pel_jabatan_dicari = $request->input('pel_jabatan_dicari');
+        $ms_pelamar->pel_posisi = $request->input('pel_posisi');
         $ms_pelamar->pel_status_aktif = "Aktif";
         $ms_pelamar->pel_umur = $age;
         $ms_pelamar->pel_pendidikan_terakhir = $request->input('pel_pendidikan_terakhir');
@@ -200,6 +213,47 @@ class MsPelamarController extends Controller
         return response()->json(compact('user'));
     }
 
+    
+    public function getImage($id)
+    {
+        $ms_pelamar = MsPelamar::find($id);
+        $image_path = (public_path('uploads/').$ms_pelamar->pel_foto);
+        $image_obj = \Image::make($image_path)->response();
+        Log::info("image_path".$image_obj);
+        return response()->json($image_obj); 
+    }
+
+    
+    public function displayImage($id)
+    {
+        $ms_pelamar = MsPelamar::find($id);
+        $path = public_path('uploads/').$ms_pelamar->pel_foto;
+
+        if (!File::exists($path)) {
+            abort(404);
+        }
+        
+        $file = File::get($path);
+        $type = File::mimeType($path);
+        $foto = Response::make($file, 200);
+        $foto->header("Content-Type", $type);
+        //$ms_pelamar->pel_foto = $foto;
+        //return response()->json($response);
+        //return response()->json($ms_pelamar);
+        return $foto;
+
+        // $path = storage_public('images/' . $filename);
+        // if (!File::exists($path)) {
+        //     abort(404);
+        // }
+        
+        // $file = File::get($path);
+        // $type = File::mimeType($path);
+        // $response = Response::make($file, 200);
+        // $response->header("Content-Type", $type);
+        // return $response;
+    }
+
 	// method untuk edit data pelamar
 	public function edit($id)
 	{
@@ -230,72 +284,89 @@ class MsPelamarController extends Controller
 		$ms_pelamar->update();
 
         return response()->json($ms_pelamar);
-	}
+    }
+    
+    // update data pelamar
+	public function updateflk(Request $request, $id)
+	{
+        $ms_pelamar = MsPelamar::find($id);
 
+        if($request->get('file'))
+        {
+            $file = $request->get('file');
+            $name = time().'.' . explode('/', explode(':', substr($file, 0, strpos($file, ';')))[1])[1];
+            \Image::make($request->get('file'))->save(public_path('uploads/').$name);        
+            $ms_pelamar->pel_foto=$name;            
+        }
+
+		$ms_pelamar->pel_posisi = $request->input('pel_posisi');
+		$ms_pelamar->pel_no_ktp = $request->input('pel_no_ktp');
+        $ms_pelamar->pel_nama_lengkap = $request->input('pel_nama_lengkap');
+        $ms_pelamar->pel_tempat_lahir = $request->input('pel_tempat_lahir');
+        $ms_pelamar->pel_tanggal_lahir = $request->input('pel_tanggal_lahir');
+        $ms_pelamar->pel_kewarganegaraan = $request->input('pel_kewarganegaraan');
+        $ms_pelamar->pel_alamat = $request->input('pel_alamat');
+        $ms_pelamar->pel_no_telepon = $request->input('pel_no_telepon');
+        $ms_pelamar->pel_email = $request->input('pel_email');
+        $ms_pelamar->pel_alamat_ortu = $request->input('pel_alamat_ortu');
+        $ms_pelamar->pel_no_telepon_ortu = $request->input('pel_no_telepon_ortu');
+
+        
+        $ms_pelamar->pel_alasan_memilih_jurusan = $request->input('pel_alasan_memilih_jurusan');
+        $ms_pelamar->pel_karya_ilmiah = $request->input('pel_karya_ilmiah');
+        $ms_pelamar->pel_pendidikan_non_formal = $request->input('pel_pendidikan_non_formal');
+        $ms_pelamar->pel_bahasa = $request->input('pel_bahasa');
+        $ms_pelamar->pel_status_pernikahan = $request->input('pel_status_pernikahan');
+        $ms_pelamar->pel_tanggal_status_pernikahan = $request->input('pel_tanggal_status_pernikahan');
+        $ms_pelamar->pel_susunan_keluarga = $request->input('pel_susunan_keluarga');
+        $ms_pelamar->pel_detail_atasan_bawahan = $request->input('pel_detail_atasan_bawahan');
+        $ms_pelamar->pel_masalah_dihadapi = $request->input('pel_masalah_dihadapi');
+        $ms_pelamar->pel_kesan_kerja = $request->input('pel_kesan_kerja');
+        $ms_pelamar->pel_inovasi_kerja = $request->input('pel_inovasi_kerja');
+        $ms_pelamar->pel_orang_yang_mendorong = $request->input('pel_orang_yang_mendorong');
+        $ms_pelamar->pel_case_keputusan = $request->input('pel_case_keputusan');
+        
+        $ms_pelamar->pel_cita_cita = $request->input('pel_cita_cita');
+        $ms_pelamar->pel_hal_mendorong_bekerja = $request->input('pel_hal_mendorong_bekerja');
+        $ms_pelamar->pel_alasan_ingin_bekerja = $request->input('pel_alasan_ingin_bekerja');
+        $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
+        $ms_pelamar->pel_fasilitas_diharapkan = $request->input('pel_fasilitas_diharapkan');
+        
+        $ms_pelamar->pel_kapan_mulai_kerja = $request->input('pel_kapan_mulai_kerja');
+        $ms_pelamar->pel_urutan_jenis_pekerjaan = $request->input('pel_urutan_jenis_pekerjaan');
+        $ms_pelamar->pel_lingkungan_kerja_diminati = $request->input('pel_lingkungan_kerja_diminati');
+        $ms_pelamar->pel_bersedia_diluar_daerah = $request->input('pel_bersedia_diluar_daerah');
+        $ms_pelamar->pel_tipe_orang_disenangi = $request->input('pel_tipe_orang_disenangi');
+        $ms_pelamar->pel_hal_sulit_mengambil_keputusan = $request->input('pel_hal_sulit_mengambil_keputusan');
+        $ms_pelamar->pel_kenalan_di_perusahaan_astra = $request->input('pel_kenalan_di_perusahaan_astra');
+        $ms_pelamar->pel_referensi_perusahaan = $request->input('pel_referensi_perusahaan');
+        $ms_pelamar->pel_hobi = $request->input('pel_hobi');
+        $ms_pelamar->pel_cara_mengisi_waktu_luang = $request->input('pel_cara_mengisi_waktu_luang');
+        $ms_pelamar->pel_organisasi_diikuti = $request->input('pel_organisasi_diikuti');
+        $ms_pelamar->pel_psikotes = $request->input('pel_psikotes');
+        $ms_pelamar->pel_kekuatan = $request->input('pel_kekuatan');
+        $ms_pelamar->pel_kelemahan = $request->input('pel_kelemahan');
+        $ms_pelamar->pel_riwayat_penyakit = $request->input('pel_riwayat_penyakit');
+        $ms_pelamar->pel_persetujuan = "Ya";
+
+		$ms_pelamar->update();
+
+        return response()->json($ms_pelamar);
+    }
+    
 	// update data pelamar
 	public function update(Request $request, $id)
 	{
-		//http://127.0.0.1:8000/api/ms_pelamar/create?pel_nama_lengkap=Dihan Kaniro&pel_email=dihankaniro@gmail.com&pel_password=9876&pel_jenis_kelamin=Perempuan&pel_no_telepon=081347576890&cari=S2&created_by=1&pel_no_ktp=0320170021&pel_tanggal_lahir=10-15-1999&pel_tempat_lahir=Jakarta&pel_gaji_diharapkan=7500000&pel_umur=20&pel_alamat=Jakarta Barat&pel_tinggi_badan=162&pel_berat_badan=60&pel_pendidikan_terakhir=S2
-		// $ms_pelamar = MsPelamar::find($id);
-
-		// if($request->hasfile('pel_foto')){
-        //     $file = $request->file('pel_foto');
-        //     $extension = $file->getClientOriginalExtension();
-        //     $filename = time() . '.' . $extension;
-        //     $file->move('uploads/', $filename);
-        //     $ms_pelamar->pel_foto = $filename;
-        // }else{
-        //     return $request;
-        //     $ms_pelamar->pel_foto = '';
-		// }
-
-        // $ms_pelamar = MsPelamar::find($id)->update([
-        //     'pel_nama_lengkap' => $request->pel_nama_lengkap,
-        //     'pel_email' => $request->pel_email,
-        //     'pel_pendidikan_terakhir' => $request->pel_pendidikan_terakhir,
-        //     'pel_status_aktif' => $request->pel_status_aktif,
-        //     'pel_umur' => $request->pel_umur,
-        //     'pel_no_ktp' => $request->pel_no_ktp,
-        //     'pel_foto' => $filename
-        // ]);
-
-		// return response()->json($ms_pelamar);
-
-		// $ms_pelamar = new MsPelamar();
-
-		// if($request->hasfile('pel_foto')){
-        //     $file = $request->file('pel_foto');
-        //     $extension = $file->getClientOriginalExtension();
-        //     $filename = time() . '.' . $extension;
-        //     $file->move('uploads/', $filename);
-        //     $ms_pelamar->pel_foto = $filename;
-        // }else{
-        //     return $request;
-        //     $ms_pelamar->pel_foto = '';
-		// }
-
-		// $ms_pelamar = MsPelamar::find($id)->update([
-        //     'pel_nama_lengkap' => $request->pel_nama_lengkap,
-		// 	'pel_email' => $request->pel_email,
-        //     'pel_jenis_kelamin' => $request->pel_jenis_kelamin,
-        //     'pel_no_ktp' => $request->pel_no_ktp,
-		// 	'pel_alamat' => $request->pel_alamat,
-		// 	'pel_tanggal_lahir' => $request->pel_tanggal_lahir,
-		// 	'pel_tempat_lahir' => $request->pel_tempat_lahir,
-		// 	'pel_no_telepon' => $request->pel_no_telepon,
-		// 	'pel_tinggi_badan' => $request->pel_tinggi_badan,
-		// 	'pel_berat_badan' => $request->pel_berat_badan,
-		// 	'pel_gaji_diharapkan' => $request->pel_gaji_diharapkan,
-		// 	'pel_jabatan_dicari' => $request->pel_jabatan_dicari,
-		// 	'pel_status_aktif' => $request->pel_status_aktif,
-		// 	'pel_umur' => $request->pel_umur,
-		// 	'pel_pendidikan_terakhir' => $request->pel_pendidikan_terakhir,
-		// 	'updated_by' => $request->updated_by
-		// ]);
-
-        // return response()->json($ms_pelamar);
-
         $ms_pelamar = MsPelamar::find($id);
+
+        if($request->get('file'))
+        {
+            $file = $request->get('file');
+            $name = time().'.' . explode('/', explode(':', substr($file, 0, strpos($file, ';')))[1])[1];
+            \Image::make($request->get('file'))->save(public_path('uploads/').$name);        
+            $ms_pelamar->pel_foto=$name;            
+        }
+
         $dateOfBirth = $request->input('pel_tanggal_lahir');	// get the request date
 
         $age = Carbon::parse($dateOfBirth)->age;	// calculate the age
@@ -312,25 +383,17 @@ class MsPelamarController extends Controller
         $ms_pelamar->pel_tinggi_badan = $request->input('pel_tinggi_badan');
         $ms_pelamar->pel_berat_badan = $request->input('pel_berat_badan');
         $ms_pelamar->pel_gaji_diharapkan = $request->input('pel_gaji_diharapkan');
-        $ms_pelamar->pel_jabatan_dicari = $request->input('pel_jabatan_dicari');
+        $ms_pelamar->pel_posisi = $request->input('pel_posisi');
         $ms_pelamar->pel_status_aktif = $request->input('pel_status_aktif');
         $ms_pelamar->pel_umur = $age;
         $ms_pelamar->pel_pendidikan_terakhir = $request->input('pel_pendidikan_terakhir');
 		$ms_pelamar->updated_by = $request->input('updated_by');
 
-		if($request->hasfile('pel_foto')){
-            $file = $request->file('pel_foto');
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $extension;
-            $file->move('uploads/', $filename);
-            $ms_pelamar->pel_foto = $filename;
-        }
-
 		$ms_pelamar->update();
 
         return response()->json($ms_pelamar);
-	}
-
+    }
+    
 	// method untuk hapus data pelamar
 	public function delete($id){
         $ms_pelamar = MsPelamar::find($id);

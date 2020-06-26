@@ -15,41 +15,40 @@ class MsLowonganController extends Controller
 {
     public function index()
 	{
-        $ms_lowongan = DB::table('ms_lowongan')->paginate(5);;
-
-        return $ms_lowongan;
+        $ms_lowongan = DB::table('ms_lowongan')
+        ->join('ms_posisi', 'ms_lowongan.low_posisi', '=', 'ms_posisi.id')
+        ->select('ms_lowongan.id', 'ms_lowongan.low_judul', 'ms_lowongan.low_kualifikasi', 'ms_lowongan.low_gaji', 'ms_lowongan.low_tanggal_ditutup', 'ms_posisi.pos_nama')
+        ->paginate(5);
+        return response()->json($ms_lowongan);
 	}
 
 	public function showDetail($id)
     {
-        // get detail pengalaman kerja
+        // // get detail pengalaman kerja
 		$ms_lowongan = MsLowongan::find($id);
+        return response()->json($ms_lowongan);
+        
+        // get detail pengalaman kerja
+        // $ms_lowongan = DB::table('ms_lowongan')
+        // ->join('ms_posisi', 'ms_lowongan.low_posisi', '=', 'ms_posisi.id')
+        // ->join('ms_perusahaan', 'ms_lowongan.low_perusahaan', '=', 'ms_perusahaan.id')
+        // ->select('ms_lowongan.id', 'ms_lowongan.low_judul', 'ms_lowongan.low_kualifikasi', 'ms_lowongan.low_gaji', 'ms_lowongan.low_tanggal_ditutup', 'ms_lowongan.low_perusahaan', 'ms_perusahaan.per_nama', 'ms_posisi.pos_nama')
+        // ->where( 'ms_lowongan.id', '=', $id )
+        // ->paginate(5);
+        
         return response()->json($ms_lowongan);
     }
 
-    // method untuk edit data pelamar
-	// public function showLowonganbyPerusahaan($id)
-	// {
-    //     MsLowongan::where( 'low_perusahaan', '=', $id )
-    //         ->where( 'low_status_aktif', '=', 'Aktif' )
-    //         ->get();
-    // }
-
     public function showLowonganbyPerusahaan($id)
     {
-        $ms_lowongan = MsLowongan::where( 'low_perusahaan', '=', $id )
-            ->where( 'low_status_aktif', '=', 'Aktif' )
-            ->paginate(5);
+        $ms_lowongan = DB::table('ms_lowongan')
+        ->join('ms_posisi', 'ms_lowongan.low_posisi', '=', 'ms_posisi.id')
+        ->select('ms_lowongan.id', 'ms_lowongan.low_judul', 'ms_lowongan.low_kualifikasi', 'ms_lowongan.low_gaji', 'ms_lowongan.low_tanggal_ditutup', 'ms_posisi.pos_nama')
+        ->where( 'ms_lowongan.low_perusahaan', '=', $id )
+        ->where( 'ms_lowongan.low_status_aktif', '=', 'Aktif' )
+        ->paginate(5);
 
         return response()->json($ms_lowongan);
-
-        // $ms_lowongan = DB::table('ms_lowongan')
-        // ->where('low_perusahaan', $id)
-        // ->where( 'low_status_aktif', 'Aktif' )
-        // ->paginate(5)
-        // ->groupBy('id');
-
-        // return response()->json($ms_lowongan);
     }
 
 	public function search(Request $request)
@@ -57,31 +56,16 @@ class MsLowonganController extends Controller
 		// menangkap data pencarian
 		$cari = $request->cari;
         $ms_lowongan = DB::table('ms_lowongan')
+        ->join('ms_posisi', 'ms_lowongan.low_posisi', '=', 'ms_posisi.id')
+        ->select('ms_lowongan.id', 'ms_lowongan.low_judul', 'ms_lowongan.low_kualifikasi', 'ms_lowongan.low_gaji', 'ms_lowongan.low_tanggal_ditutup', 'ms_posisi.pos_nama')
 		->where('low_judul','LIKE',"%".$cari."%")
 		->orwhere('low_bidang_kerja', 'LIKE', "%".$cari."%") //ubah jadi tahun lulus
 		->orwhere('low_gaji', 'LIKE', "%".$cari."%")
 		->orwhere('low_tanggal_ditutup', 'LIKE', "%".$cari."%")
-		->orwhere('low_kualifikasi', 'LIKE', "%".$cari."%")
-		->orwhere('low_jabatan', 'LIKE', "%".$cari."%")->paginate(5);
+		->orwhere('low_kualifikasi', 'LIKE', "%".$cari."%")->paginate(5);
 
         return response()->json($ms_lowongan);
     }
-
-    // public function searchbyidperusahaan($id, Request $request)
-    // {
-	// 	// menangkap data pencarian
-	// 	$cari = $request->cari;
-	// 	$ms_lowongan = DB::table('ms_lowongan')
-    //     ->where('low_perusahaan', '=', $id )
-	// 	->orwhere('low_judul','LIKE',"%".$cari."%")
-	// 	->orwhere('low_bidang_kerja', 'LIKE', "%".$cari."%") //ubah jadi tahun lulus
-	// 	->orwhere('low_gaji', 'LIKE', "%".$cari."%")
-	// 	->orwhere('low_tanggal_ditutup', 'LIKE', "%".$cari."%")
-	// 	->orwhere('low_kualifikasi', 'LIKE', "%".$cari."%")
-	// 	->orwhere('low_jabatan', 'LIKE', "%".$cari."%")->paginate(5);
-
-    //     return response()->json($ms_lowongan);
-    // }
 
 	public function create(Request $request){
 
@@ -90,9 +74,9 @@ class MsLowonganController extends Controller
         $ms_lowongan->low_judul = $request->input('low_judul');
         $ms_lowongan->low_deskripsi = $request->input('low_deskripsi');
         $ms_lowongan->low_gaji = $request->input('low_gaji');
-        $ms_lowongan->low_tanggal_ditutup = date('Y-m-d',strtotime($request->input('low_tanggal_ditutup')));
+        $ms_lowongan->low_tanggal_ditutup = $request->input('low_tanggal_ditutup');
         $ms_lowongan->low_kualifikasi = $request->input('low_kualifikasi');
-        $ms_lowongan->low_jabatan = $request->input('low_jabatan');//foreign key
+        $ms_lowongan->low_posisi = $request->input('low_posisi');//foreign key
         $ms_lowongan->low_perusahaan = $request->input('low_perusahaan');//foreign key
         $ms_lowongan->low_bidang_kerja = $request->input('low_bidang_kerja');//foreign key
         $ms_lowongan->low_spesialisasi = $request->input('low_spesialisasi');//foreign key
@@ -120,9 +104,9 @@ class MsLowonganController extends Controller
         $ms_lowongan->low_judul = $request->input('low_judul');
         $ms_lowongan->low_deskripsi = $request->input('low_deskripsi');
         $ms_lowongan->low_gaji = $request->input('low_gaji');
-        $ms_lowongan->low_tanggal_ditutup = date('Y-m-d',strtotime($request->input('low_tanggal_ditutup')));
+        $ms_lowongan->low_tanggal_ditutup = $request->input('low_tanggal_ditutup');
         $ms_lowongan->low_kualifikasi = $request->input('low_kualifikasi');
-        $ms_lowongan->low_jabatan = $request->input('low_jabatan');//foreign key
+        $ms_lowongan->low_posisi = $request->input('low_posisi');//foreign keyW
         $ms_lowongan->low_perusahaan = $request->input('low_perusahaan');//foreign key
         $ms_lowongan->low_bidang_kerja = $request->input('low_bidang_kerja');//foreign key
         $ms_lowongan->low_spesialisasi = $request->input('low_spesialisasi');//foreign key

@@ -62,6 +62,14 @@ class MsPerusahaanController extends Controller
 
         $ms_perusahaan = new MsPerusahaan();
 
+        if($request->get('file'))
+        {
+            $file = $request->get('file');
+            $name = time().'.' . explode('/', explode(':', substr($file, 0, strpos($file, ';')))[1])[1];
+            \Image::make($request->get('file'))->save(public_path('uploads/').$name);        
+            $ms_perusahaan->per_foto=$name;            
+        }
+
         $ms_perusahaan->per_nama = $request->input('per_nama');
         $ms_perusahaan->per_deskripsi = $request->input('per_deskripsi');
 		$ms_perusahaan->per_email = $request->input('per_email');
@@ -70,17 +78,6 @@ class MsPerusahaanController extends Controller
         $ms_perusahaan->per_alamat = $request->input('per_alamat');
         $ms_perusahaan->per_status_aktif = "Aktif";
 		$ms_perusahaan->created_by = $request->input('created_by');
-
-		// if($request->hasfile('pel_foto')){
-        //     $file = $request->file('pel_foto');
-        //     $extension = $file->getClientOriginalExtension();
-        //     $filename = time() . '.tj' . $extension;
-        //     $file->move('uploads/', $filename);
-        //     $ms_pelamar->pel_foto = $filename;
-        // }else{
-        //     return $request;
-        //     $ms_pelamar->pel_foto = '';
-		// }
 
 		$ms_perusahaan->save();
 
@@ -99,6 +96,14 @@ class MsPerusahaanController extends Controller
 	{
 		$ms_perusahaan = MsPerusahaan::find($id);
 
+        if($request->get('file'))
+        {
+            $file = $request->get('file');
+            $name = time().'.' . explode('/', explode(':', substr($file, 0, strpos($file, ';')))[1])[1];
+            \Image::make($request->get('file'))->save(public_path('uploads/').$name);        
+            $ms_perusahaan->per_foto=$name;            
+        }
+
         $ms_perusahaan->per_nama = $request->input('per_nama');
 		$ms_perusahaan->per_deskripsi = $request->input('per_deskripsi');
         $ms_perusahaan->per_email = $request->input('per_email');
@@ -107,14 +112,6 @@ class MsPerusahaanController extends Controller
         $ms_perusahaan->per_alamat = $request->input('per_alamat');
         $ms_perusahaan->per_status_aktif = $request->input('per_status_aktif');
 		$ms_perusahaan->updated_by = $request->input('updated_by');
-
-		if($request->hasfile('per_foto')){
-            $file = $request->file('per_foto');
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $extension;
-            $file->move('uploads/', $filename);
-            $ms_perusahaan->per_foto = $filename;
-        }
 
 		$ms_perusahaan->update();
 

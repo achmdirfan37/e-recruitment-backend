@@ -95,6 +95,7 @@ class MsRoleController extends Controller
         $ms_role->rol_perusahaan = $request->input('rol_perusahaan');
         $ms_role->rol_email = $request->input('rol_email');
         $ms_role->rol_status_aktif = $request->input('rol_status_aktif');
+        $ms_role->rol_status_aktif = "Aktif";
 		$ms_role->updated_by = $request->input('updated_by');
 
 		$ms_role->update();

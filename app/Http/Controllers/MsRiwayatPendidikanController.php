@@ -20,6 +20,14 @@ class MsRiwayatPendidikanController extends Controller
         return $ms_riwayat_pendidikan;
 	}
 
+	// method untuk edit data pelamar
+	public function viewflk($id)
+	{
+        $ms_riwayat_pendidikan = MsRiwayatPendidikan::where( 'rpd_pelamar', '=', $id )
+            ->paginate(5);;
+        return response()->json($ms_riwayat_pendidikan); 
+    }
+    
 	public function showDetail($id)
     {
         // get detail pengalaman kerja

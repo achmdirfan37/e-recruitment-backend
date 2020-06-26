@@ -10,30 +10,24 @@ use DB;
 use App\MsBidangPekerjaan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Mail;
 
 class MsBidangPekerjaanController extends Controller
 {
     public function index()
 	{
-		// $ms_bidang_pekerjaan = DB::table('ms_bidang_pekerjaan')->get();
-
-        // return response()->json([
-        //     'message' => 'success',
-        //     'data' => $ms_bidang_pekerjaan
-		// ], 200);
-		$ms_bidang_pekerjaan = DB::table('ms_bidang_pekerjaan')->paginate(5);;
-
-        // return response()->json([
-        //     'message' => 'success',
-        //     'data' => $ms_keterampilan
-        // ], 200);
-
-        // $ms_keterampilan = MsKeterampilan::paginate(5);
-
+        $ms_bidang_pekerjaan = DB::table('ms_bidang_pekerjaan')->paginate(5);;
         return $ms_bidang_pekerjaan;
-
+	}
+	
+	public function showDetail($id)
+    {
+        // get detail pelamar
+		$ms_bidang_pekerjaan = MsBidangPekerjaan::find($id);
+        return response()->json($ms_bidang_pekerjaan);
     }
 
+	
     public function view()
 	{
 		$ms_bidang_pekerjaan = DB::table('ms_bidang_pekerjaan')->get();
@@ -44,15 +38,7 @@ class MsBidangPekerjaanController extends Controller
         ], 200);
 	}
 
-	public function showDetail($id)
-    {
-        // get detail pelamar
-		$ms_bidang_pekerjaan = MsPelamar::find($id);
-        return response()->json($ms_bidang_pekerjaan);
-    }
-
-
-    public function search(Request $request)
+	public function search(Request $request)
     {
 		// menangkap data pencarian
 		$cari = $request->cari;
@@ -67,6 +53,8 @@ class MsBidangPekerjaanController extends Controller
         $ms_bidang_pekerjaan = new MsBidangPekerjaan();
 
         $ms_bidang_pekerjaan->bid_nama = $request->input('bid_nama');
+		//$request->input('ket_pelamar');
+
 		$ms_bidang_pekerjaan->save();
 
         return response()->json($ms_bidang_pekerjaan);
@@ -96,5 +84,6 @@ class MsBidangPekerjaanController extends Controller
         $ms_bidang_pekerjaan = MsBidangPekerjaan::find($id);
         $ms_bidang_pekerjaan->delete();
         return response()->json($ms_bidang_pekerjaan);
-	}
+    }
+
 }

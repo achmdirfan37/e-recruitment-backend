@@ -19,6 +19,14 @@ class MsKeterampilanController extends Controller
         $ms_keterampilan = DB::table('ms_keterampilan')->paginate(5);;
         return $ms_keterampilan;
 	}
+	
+	// method untuk edit data pelamar
+	public function viewflk($id)
+	{
+        $ms_keterampilan = MsKeterampilan::where( 'ket_pelamar', '=', $id )
+            ->paginate(5);
+        return response()->json($ms_keterampilan); 
+	}
 
 	public function showDetail($id)
     {
@@ -42,8 +50,8 @@ class MsKeterampilanController extends Controller
         $ms_keterampilan = new MsKeterampilan();
 
         $ms_keterampilan->ket_nama = $request->input('ket_nama');
-		$ms_keterampilan->ket_pelamar = 4;
-		//$request->input('ket_pelamar');
+		//$ms_keterampilan->ket_pelamar = 4;
+		$request->input('ket_pelamar');
 
 		$ms_keterampilan->save();
 

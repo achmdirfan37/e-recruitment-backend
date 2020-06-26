@@ -18,7 +18,14 @@ class MsPengalamanKerjaController extends Controller
         $ms_pengalaman_kerja = DB::table('ms_pengalaman_kerja')->paginate(5);;
 
         return $ms_pengalaman_kerja;
-	}
+    }
+    
+    public function viewflk($id)
+	{
+        $ms_pengalaman_kerja = MsPengalamanKerja::where( 'pkj_pelamar', '=', $id )
+            ->paginate(5);
+        return response()->json($ms_pengalaman_kerja);   
+    }
 
 	public function showDetail($id)
     {

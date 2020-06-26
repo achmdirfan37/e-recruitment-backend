@@ -7,7 +7,6 @@
  
  <h1>{{ $body }}</h1>
  <h1>{{ $pass }}</h1>
- <h1>{{ $username }}</h1>
  <p>Thank you, {{ $name }}</p>
  
 </body>
